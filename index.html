@@ -24,15 +24,15 @@
 
         // 5. Add a standard OpenStreetMap background layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
         // 6. Define the conditional styling function based on Land Use
         function getParcelStyle(feature) {
-            let landUse = feature.properties.Landuse; // Matches your exact column name
-            let parcelColor = 'gray'; // Default fallback color
+            let landUse = feature.properties.Landuse; 
+            let parcelColor = 'gray'; // Fallback color
 
-            // Conditional assignment
             if (landUse === 'Residential') {
                 parcelColor = 'brown';
             } else if (landUse === 'Agricultural') {
@@ -45,16 +45,12 @@
                 fillColor: parcelColor,
                 weight: 1,
                 opacity: 1,
-                color: 'white',   // Border line color
-                fillOpacity: 0.7  // Make colors slightly transparent
+                color: 'white',
+                fillOpacity: 0.7  
             };
         }
 
-        // 7. Define popup behavior for each feature (UPI and Area)
-        function onEachParcelFeature(feature, layer) {
-            // 7. Define popup behavior for each feature (UPI and Area)
-        function onEachParcelFeature(feature, layer) {
-           // 7. Define popup behavior for each feature (UPI, Land Use, and Area)
+        // 7. Define popup behavior for each feature (UPI, Land Use, and Area)
         function onEachParcelFeature(feature, layer) {
             let upi = feature.properties.upi || "No UPI"; 
             let area = feature.properties.st_area_sh || "Unknown"; 
@@ -81,11 +77,6 @@
                 map.fitBounds(geojsonLayer.getBounds());
             })
             .catch(error => console.error('Error loading the GeoJSON data:', error));
-    })
-    // HIGHLIGHT ENDS HERE (Line 80)
-            })
-            .catch(error => console.error('Error loading the GeoJSON data:', error));
-
     </script>
 </body>
 </html>
