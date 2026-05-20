@@ -52,15 +52,21 @@
 
         // 7. Define popup behavior for each feature (UPI and Area)
         function onEachParcelFeature(feature, layer) {
-            let upi = feature.properties.UPI || "No UPI";
-            let area = feature.properties.st_area_sh || "Unknown"; // Matches your ArcGIS column name
+            // 7. Define popup behavior for each feature (UPI and Area)
+        function onEachParcelFeature(feature, layer) {
+            let upi = feature.properties.upi || "No UPI"; // Changed to lowercase 'upi'
+            let area = feature.properties.st_area_sh || "Unknown"; 
+            let landUse = feature.properties.Landuse || "Unknown";
             
             // Format the text inside the popup
             let popupContent = `
                 <strong>Parcel Information</strong><br><hr>
                 <b>UPI:</b> ${upi}<br>
+                <b>Land Use:</b> ${landUse}<br>
                 <b>Area:</b> ${parseFloat(area).toFixed(2)} sqm
             `;
+            layer.bindPopup(popupContent);
+        }
             layer.bindPopup(popupContent);
         }
 
