@@ -54,11 +54,12 @@
         function onEachParcelFeature(feature, layer) {
             // 7. Define popup behavior for each feature (UPI and Area)
         function onEachParcelFeature(feature, layer) {
-            let upi = feature.properties.upi || "No UPI"; // Changed to lowercase 'upi'
+           // 7. Define popup behavior for each feature (UPI, Land Use, and Area)
+        function onEachParcelFeature(feature, layer) {
+            let upi = feature.properties.upi || "No UPI"; 
             let area = feature.properties.st_area_sh || "Unknown"; 
             let landUse = feature.properties.Landuse || "Unknown";
             
-            // Format the text inside the popup
             let popupContent = `
                 <strong>Parcel Information</strong><br><hr>
                 <b>UPI:</b> ${upi}<br>
@@ -67,21 +68,21 @@
             `;
             layer.bindPopup(popupContent);
         }
-            layer.bindPopup(popupContent);
-        }
 
         // 8. Fetch and Load your local GeoJSON file dynamically
         fetch('shyaraparcels.json')
             .then(response => response.json())
             .then(data => {
-                // Add the GeoJSON to the map with styles and popups
                 let geojsonLayer = L.geoJSON(data, {
                     style: getParcelStyle,
                     onEachFeature: onEachParcelFeature
                 }).addTo(map);
 
-                // Automatically zoom the map to fit your specific 500 parcels location
                 map.fitBounds(geojsonLayer.getBounds());
+            })
+            .catch(error => console.error('Error loading the GeoJSON data:', error));
+    })
+    // HIGHLIGHT ENDS HERE (Line 80)
             })
             .catch(error => console.error('Error loading the GeoJSON data:', error));
 
