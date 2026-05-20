@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGE4165 Web Based Mapping - Assignment</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { width: 100%; height: 100vh; } /* Makes map full screen */
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // 4. Initialize the Map centered around Rwanda coordinates
+        const map = L.map('map').setView([-2.0, 30.0], 11);
+
+        // 5. Add a standard OpenStreetMap background layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // 6. Define the conditional styling function based on Land Use
+        function getParcelStyle(feature) {
+            let landUse = feature.properties.Landuse; // Matches your exact column name
+            let parcelColor = 'gray'; // Default fallback color
+
+            // Conditional assignment
+            if (landUse === 'Residential') {
+                parcelColor = 'brown';
+            } else if (landUse === 'Agricultural') {
+                parcelColor = 'green';
+            } else if (landUse === 'Commercial') {
+                parcelColor = 'red';
+            }
+
+            return {
+                fillColor: parcelColor,
+                weight: 1,
+                opacity: 1,
+                color: 'white',   // Border line color
+                fillOpacity: 0.7  // Make colors slightly transparent
+            };
+        }
+
+        // 7. Define popup behavior for each feature (UPI and Area)
+        function onEachParcelFeature(feature, layer) {
+            let upi = feature.properties.UPI || "No UPI";
+            let area = feature.properties.st_area_sh || "Unknown"; // Matches your ArcGIS column name
+            
+            // Format the text inside the popup
+            let popupContent = `
+                <strong>Parcel Information</strong><br><hr>
+                <b>UPI:</b> ${upi}<br>
+                <b>Area:</b> ${parseFloat(area).toFixed(2)} sqm
+            `;
+            layer.bindPopup(popupContent);
+        }
+
+        // 8. Fetch and Load your local GeoJSON file dynamically
+        fetch('parcels.geojson')
+            .then(response => response.json())
+            .then(data => {
+                // Add the GeoJSON to the map with styles and popups
+                let geojsonLayer = L.geoJSON(data, {
+                    style: getParcelStyle,
+                    onEachFeature: onEachParcelFeature
+                }).addTo(map);
+
+                // Automatically zoom the map to fit your specific 500 parcels location
+                map.fitBounds(geojsonLayer.getBounds());
+            })
+            .catch(error => console.error('Error loading the GeoJSON data:', error));
+
+    </script>
+</body>
+</html>
